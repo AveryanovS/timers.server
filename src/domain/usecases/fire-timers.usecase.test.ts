@@ -11,16 +11,42 @@ describe('fire timers', () => {
     describe('empty current timers for the moment', () => {
         const timerRepo = mock<TimerRepository>();
         const firingService = mock<FiringService>();
-        when(firingService.fire(anything())).thenResolve(null);
+        firingService.fire = jest.fn(() => Promise.resolve(null));
         when(timerRepo.getNearestTimers(anything())).thenResolve([]);
         const usecase = new FireTimersUsecase(
             instance(timerRepo),
-            instance(firingService),
+            firingService,
             new LoggerServiceTestImpl(),
         );
 
-        it('does nothing', async () => {
+        it('fires nothing', async () => {
             await usecase.exec('current');
+            expect(firingService.fire).not.toBeCalled();
+        });
+    });
+
+    describe('one timer', () => {
+        const timerRepo = mock<TimerRepository>();
+        timerRepo.getNearestTimers = jest.fn(
+            () => Promise.resolve([{
+                id: 1,
+                firesAt: new Date(),
+                reFiresAt: new Date(),
+                reFireDelay: 5,
+                done: false,
+                url: 'http://google.com',
+            }]),
+        );
+        const firingService = mock<FiringService>();
+        firingService.fire = jest.fn(() => Promise.resolve(null));
+        const usecase = new FireTimersUsecase(
+            timerRepo,
+            firingService,
+            new LoggerServiceTestImpl(),
+        );
+        it('calls fire with correct url', async () => {
+            await usecase.exec('current');
+            expect(firingService.fire).toBeCalledWith('http://google.com/1');
         });
     });
 
@@ -63,7 +89,6 @@ describe('fire timers', () => {
         );
         it('handles success 5 times, same on errors', async () => {
             await usecase.exec('current');
-            expect(firingService.fire).toBeCalledTimes(10);
             expect(timerRepo.setDone).toBeCalledTimes(5);
             expect(timerRepo.setReFiresAt).toBeCalledTimes(5);
         });

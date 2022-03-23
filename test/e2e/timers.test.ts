@@ -1,27 +1,23 @@
 import 'reflect-metadata';
-import {container} from "../../src/inversify.config";
-import {Server} from "../../src/app/server";
-import {Database} from "../../src/infrastructure/db/db";
-import {LoggerServiceTestImpl} from "../logger.service.impl";
+// @ts-ignore
 import request from 'supertest';
-import moment = require("moment");
+import moment = require('moment');
+import { container } from '../../src/inversify.config';
+import { Server } from '../../src/app/server';
+import { Database } from '../../src/infrastructure/db/db';
+import { LoggerServiceTestImpl } from '../logger.service.impl';
 
 describe('Timer methods tests', () => {
     const server = container.get<Server>(Server);
-    server.run()
+    server.run();
     const app = server.getApp();
 
     container.bind<Database>(Database).toDynamicValue(() => new Database(
-        {dbConnection:'mongodb://localhost:21017/timers_test',port:1234},
-        new LoggerServiceTestImpl()
+        { dbConnection: 'mongodb://localhost:21017/timers_test', port: 1234 },
+        new LoggerServiceTestImpl(),
     ));
 
-
     describe('Set-get timer flow', () => {
-        // beforeAll(async (done) => {
-        //     done();
-        // });
-
         let timerId = '';
         it('Sets timer', async () => {
             const result: any = await request(app)
@@ -30,8 +26,8 @@ describe('Timer methods tests', () => {
                     hours: 1,
                     minutes: 1,
                     seconds: 1,
-                    url: 'google.com'
-                })
+                    url: 'google.com',
+                });
             expect(result.statusCode).toBe(200);
             timerId = result.body.id;
         });
@@ -39,7 +35,7 @@ describe('Timer methods tests', () => {
             .add(1, 'h')
             .add(1, 'minutes')
             .add(1, 'seconds')
-            .diff(moment(), 'seconds')
+            .diff(moment(), 'seconds');
         it('Gets timer', async () => {
             const result: any = await request(app)
                 .get(`/timers/${timerId}`)
@@ -47,16 +43,12 @@ describe('Timer methods tests', () => {
                     hours: 1,
                     minutes: 1,
                     seconds: 1,
-                    url: 'google.com'
-                })
+                    url: 'google.com',
+                });
             expect(result.statusCode).toBe(200);
             expect(result.body.id).toEqual(timerId);
             expect(result.body.timeLeft).toBeGreaterThanOrEqual(secondsLeft - 1);
             expect(result.body.timeLeft).toBeLessThanOrEqual(secondsLeft + 1);
         });
     });
-
-    // afterAll(async () => {
-        // await mongoose.connection.db.dropDatabase();
-    // });
 });

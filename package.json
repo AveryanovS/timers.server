@@ -4,9 +4,9 @@
   "description": "timers for webhook calls",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest --testPathPattern=src",
+    "test:unit": "jest --testPathPattern=src",
     "test:e2e": "jest --testPathPattern=test/e2e",
-    "test:all": "jest",
+    "test": "jest",
     "build": "tsc -p .",
     "dev": "ts-node ./src",
     "dev_pretty": "ts-node ./src | pino-pretty"
