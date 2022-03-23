@@ -25,7 +25,7 @@ export class FireTimersUsecase {
         for (const timer of timers) {
             this.loggerService.info('trying to reach', { id: timer.id, url: timer.url });
             currentTimersPromises.push(
-                this.firingService.fire(timer.url)
+                this.firingService.fire(`${timer.url}/${timer.id}`)
                     .then(() => {
                         this.loggerService.info('timer fired successfully', { id: timer.id });
                         return this.timersRepository.setDone(timer.id);
