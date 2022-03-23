@@ -4,7 +4,7 @@ import { Keys } from '../../keys';
 import { MILLISECONDS_IN_HOUR, MILLISECONDS_IN_MINUTE, MILLISECONDS_IN_SECOND } from '../const/const';
 import { LoggerService } from '../ports/out/logger.service';
 
-interface TimerSetData {
+export interface TimerSetData {
     hours: number,
     minutes: number,
     seconds: number,

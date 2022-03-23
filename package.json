@@ -18,6 +18,7 @@
     "express": "^4.17.3",
     "inversify": "^6.0.1",
     "inversify-inject-decorators": "^3.1.0",
+    "joi": "^17.6.0",
     "mongoose": "^6.2.7",
     "mongoose-plugin-autoinc": "^1.1.9",
     "needle": "^3.0.0",

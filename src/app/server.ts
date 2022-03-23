@@ -6,6 +6,7 @@ import { GetTimerUsecase } from '../domain/usecases/get-timer.usecase';
 import { Config } from '../config';
 import { Keys } from '../keys';
 import { LoggerService } from '../domain/ports/out/logger.service';
+import { setTimerSchema } from './validation/set-timer';
 
 @injectable()
 export class Server {
@@ -28,12 +29,9 @@ export class Server {
         this.app.use(express.json());
 
         this.app.post('/timers', (req, res, next) => {
-            this.setTimerUsecase.exec({ // TODO: validation
-                url: req.body.url,
-                hours: req.body.hours,
-                minutes: req.body.minutes,
-                seconds: req.body.seconds,
-            })
+            const { error, value } = setTimerSchema.validate(req.body);
+            if (error) return next(error);
+            this.setTimerUsecase.exec(value)
                 .then((result) => res.json(result))
                 .catch((err) => next(err));
         });
