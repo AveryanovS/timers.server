@@ -7,16 +7,16 @@ import { Keys } from '../keys';
 export class TimerLoop {
     constructor(
         @inject(FireTimersUsecase)
-        private readonly fireCurrentTimersUsecase: FireTimersUsecase,
+        private readonly fireTimersUsecase: FireTimersUsecase,
         @inject(Keys.LoggerService)
         private readonly loggerService: LoggerService,
     ) {
     }
 
     public start() {
-        this.fireCurrentTimersUsecase.exec('missed');
+        this.fireTimersUsecase.exec('missed');
         setInterval(() => {
-            this.fireCurrentTimersUsecase.exec('current');
+            this.fireTimersUsecase.exec('current');
         }, 1000);
         this.loggerService.info('timer loop started', {});
     }

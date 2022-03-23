@@ -11,7 +11,7 @@ import { Config } from './config';
 import { FiringService } from './domain/ports/out/firing.service';
 import { FiringServiceImpl } from './infrastructure/services/firing.service.impl';
 import { LoggerService } from './domain/ports/out/logger.service';
-import { LoggerServiceImpl } from './infrastructure/services/logger.sservice.impl';
+import { LoggerServiceImpl } from './infrastructure/services/logger.service.impl';
 import { TimerLoop } from './app/timer-loop';
 import { FireTimersUsecase } from './domain/usecases/fire-timers.usecase';
 

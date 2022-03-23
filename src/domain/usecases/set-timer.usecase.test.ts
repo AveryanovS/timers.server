@@ -1,9 +1,11 @@
 import 'reflect-metadata';
-import { mock } from 'ts-mockito';
+import {
+    anything, capture, instance, mock, when,
+} from 'ts-mockito';
 import moment from 'moment';
 import { SetTimerUsecase } from './set-timer.usecase';
 import { LoggerServiceTestImpl } from '../../../test/logger.service.impl';
-import { TimerCreateData, TimerRepository } from '../ports/out/timer.repository';
+import { TimerRepository } from '../ports/out/timer.repository';
 
 const mockedTimer = {
     id: 1,
@@ -14,8 +16,8 @@ const mockedTimer = {
     url: 'google.com',
 };
 const timerRepo = mock<TimerRepository>();
-timerRepo.createTimer = jest.fn(() => Promise.resolve(mockedTimer));
-const usecase = new SetTimerUsecase(timerRepo, new LoggerServiceTestImpl());
+when(timerRepo.createTimer(anything())).thenResolve(mockedTimer);
+const usecase = new SetTimerUsecase(instance(timerRepo), new LoggerServiceTestImpl());
 
 describe('set timer', () => {
     describe('1 hr, 1 min, 1s timer', () => {
@@ -32,9 +34,9 @@ describe('set timer', () => {
                 .add(1, 's')
                 .toDate()
                 .valueOf();
-            const mockArg:TimerCreateData = (timerRepo.createTimer as jest.Mock).mock.calls[0][0];
-            expect(mockArg.firesAt.valueOf()).toBeLessThan(nearTimestamp + 50);
-            expect(mockArg.firesAt.valueOf()).toBeGreaterThan(nearTimestamp - 50);
+            const [mockArg] = capture(timerRepo.createTimer).last();
+            expect(mockArg.firesAt.valueOf()).toBeLessThan(nearTimestamp + 100);
+            expect(mockArg.firesAt.valueOf()).toBeGreaterThan(nearTimestamp - 100);
         });
     });
 });

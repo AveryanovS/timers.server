@@ -1,5 +1,5 @@
 {
-  "name": "-timers",
+  "name": "timers",
   "version": "1.0.0",
   "description": "timers for webhook calls",
   "main": "dist/index.js",

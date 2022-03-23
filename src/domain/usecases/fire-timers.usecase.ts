@@ -3,6 +3,7 @@ import { TimerRepository } from '../ports/out/timer.repository';
 import { FiringService } from '../ports/out/firing.service';
 import { Keys } from '../../keys';
 import { LoggerService } from '../ports/out/logger.service';
+import { MILLISECONDS_IN_SECOND } from '../const/const';
 
 @injectable()
 export class FireTimersUsecase {
@@ -16,12 +17,12 @@ export class FireTimersUsecase {
     ) {}
 
     public async exec(type: 'current' | 'missed'):Promise<null> {
-        const currentTimers = type === 'current'
-            ? await this.timersRepository.getNearestTimers(1000)
+        const timers = type === 'current'
+            ? await this.timersRepository.getNearestTimers(MILLISECONDS_IN_SECOND)
             : await this.timersRepository.getMissedTimers();
-        if (currentTimers.length) this.loggerService.info('found timers', { count: currentTimers.length });
+        if (timers.length) this.loggerService.info('found timers', { count: timers.length });
         const currentTimersPromises = [];
-        for (const timer of currentTimers) {
+        for (const timer of timers) {
             this.loggerService.info('trying to reach', { id: timer.id, url: timer.url });
             currentTimersPromises.push(
                 this.firingService.fire(timer.url)
