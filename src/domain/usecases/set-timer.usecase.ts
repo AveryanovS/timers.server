@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { TimerRepository } from '../ports/out/timer.repository';
 import { Keys } from '../../keys';
-import { MILLISECONDS_IN_SECOND } from '../const/const';
+import { MILLISECONDS_IN_HOUR, MILLISECONDS_IN_MINUTE, MILLISECONDS_IN_SECOND } from '../const/const';
 import { LoggerService } from '../ports/out/logger.service';
 
 interface TimerSetData {
@@ -25,8 +25,8 @@ export class SetTimerUsecase {
         const firesAt = new Date(
             new Date().valueOf()
             + (MILLISECONDS_IN_SECOND * data.seconds)
-            + (MILLISECONDS_IN_SECOND * 60 * data.minutes)
-            + (MILLISECONDS_IN_SECOND * 60 * 60 * data.hours),
+            + (MILLISECONDS_IN_MINUTE * data.minutes)
+            + (MILLISECONDS_IN_HOUR * data.hours),
         );
         const timer = await this.timerRepository.createTimer({
             firesAt,
