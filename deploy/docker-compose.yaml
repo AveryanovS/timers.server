@@ -1,0 +1,16 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo
+    restart: always
+  server:
+    depends_on: [mongodb]
+    build:
+      context: ../
+      dockerfile: ./deploy/Dockerfile
+    environment:
+      - DB_CONNECTION_STRING=mongodb://mongodb:27017/timers
+      - PORT=1333
+    restart: always
+    ports:
+      - "1333:1333"
