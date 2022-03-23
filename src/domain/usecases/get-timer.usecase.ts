@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Keys } from '../../keys';
 import { TimerRepository } from '../ports/out/timer.repository';
+import { MILLISECONDS_IN_SECOND } from '../const/const';
 
 interface TimeLeft {
     id: number,
@@ -17,7 +18,9 @@ export class GetTimerUsecase {
 
     public async exec(id: number):Promise<TimeLeft> {
         const timer = await this.timerRepository.getTimer(id);
-        let timeLeft = Math.floor((timer.firesAt.valueOf() - new Date().valueOf()) / 1000);
+        let timeLeft = Math.ceil(
+            (timer.firesAt.valueOf() - new Date().valueOf()) / MILLISECONDS_IN_SECOND,
+        );
         if (timeLeft < 0) timeLeft = 0;
         return Promise.resolve({
             id,
