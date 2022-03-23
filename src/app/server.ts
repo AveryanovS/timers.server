@@ -64,9 +64,13 @@ export class Server {
         });
     }
 
-    run():void {
+    public run():void {
         this.app.listen(this.port, () => {
             this.loggerService.info('server started', { port: this.port });
         });
+    }
+
+    public getApp():Application {
+        return this.app;
     }
 }
