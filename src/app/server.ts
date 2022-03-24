@@ -38,7 +38,10 @@ export class Server {
 
         this.app.get('/timers/:id', (req, res, next) => {
             this.getTimerUsecase.exec(parseInt(req.params.id, 10))
-                .then((result) => res.json(result))
+                .then((result) => res.json({
+                    id: result.id,
+                    time_left: result.timeLeft,
+                }))
                 .catch((err) => next(err));
         });
         this.app.use((_req, _res, next) => {
@@ -47,6 +50,16 @@ export class Server {
 
         this.app.use((err: any, req: any, res: any, _next: any) => {
             this.loggerService.error('error', err);
+            if (err.details) { // Joi validation error
+                const message = err.details.reduce(
+                    (prev:string, cur:{ message:string }) => `${prev + cur.message}; `,
+                    '',
+                );
+                return res.status(400).json({
+                    message,
+                    data: err.details,
+                });
+            }
 
             const data = err.data || {};
             if (!isBoom(err)) {
@@ -56,7 +69,7 @@ export class Server {
 
             err.output.payload.data = data;
             return res.status(err.output.statusCode).json({
-                type: err.message,
+                message: err.message,
                 data: err.output.payload.data || {},
             });
         });

@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Timers API
+  description: A simple API to set timers
+
+servers:
+  - url: http://localhost:1333
+
+paths:
+  /timers:
+    post:
+      description: Sets timer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Timer'
+      responses:
+        '200':
+          description: Successfully, timer created
+        '400':
+          $ref: '#/components/responses/400Error'
+
+  /timers/{id}:
+    get:
+      description: Obtain time left for timer by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returned a timer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  time_left:
+                    type: integer
+                    example: 645
+components:
+  schemas:
+    Timer:
+      type: object
+      required:
+        - url
+        - hours
+        - minutes
+        - seconds
+      properties:
+        url:
+          type: string
+          example: https://google.com
+        hours:
+          type: integer
+          example: 1
+        minutes:
+          type: integer
+          example: 5
+        seconds:
+          type: integer
+          example: 30
+  responses:
+    400Error:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: hours field is required;
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    path:
+                      type: array
+                      example: ["hours"]
+                      items:
+                        type: string
+                    type:
+                      type: string
+                      example: "any.required"
+

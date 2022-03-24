@@ -47,8 +47,8 @@ describe('Timer methods tests', () => {
                 });
             expect(result.statusCode).toBe(200);
             expect(result.body.id).toEqual(timerId);
-            expect(result.body.timeLeft).toBeGreaterThanOrEqual(secondsLeft - 1);
-            expect(result.body.timeLeft).toBeLessThanOrEqual(secondsLeft + 1);
+            expect(result.body.time_left).toBeGreaterThanOrEqual(secondsLeft - 1);
+            expect(result.body.time_left).toBeLessThanOrEqual(secondsLeft + 1);
         });
     });
 });
